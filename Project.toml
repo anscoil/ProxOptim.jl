@@ -1,0 +1,4 @@
+name = "ProxOptim"
+uuid = "1ff560af-ead4-4131-98b0-496dcfbc345f"
+authors = ["Nicolas Barré <nicolas.barre@protonmail.com>"]
+version = "0.1.0"
