@@ -2,3 +2,6 @@ name = "ProxOptim"
 uuid = "1ff560af-ead4-4131-98b0-496dcfbc345f"
 authors = ["Nicolas Barré <nicolas.barre@protonmail.com>"]
 version = "0.1.0"
+
+[deps]
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
