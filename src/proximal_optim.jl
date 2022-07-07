@@ -135,7 +135,10 @@ function proximal_iter!(A, ∇A, env,
                         compute_err!::Function,
                         compute_grad!::Function,
                         method, n::Int;
-                        prox! = nothing, errors=[], print_errors=true,
+                        prox! = nothing,
+                        errors=[],
+                        print_errors=false,
+                        progress=nothing,
                         restart=false)
     uf = compute_fwd!(env, A)
     err = compute_err!(env, uf)
@@ -154,6 +157,9 @@ function proximal_iter!(A, ∇A, env,
         end
         if print_errors
             println(err)
+        end
+        if progress != nothing
+            next!(progress)
         end
     end
     errors
