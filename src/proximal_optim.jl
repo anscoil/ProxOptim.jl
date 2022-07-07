@@ -1,3 +1,5 @@
+using ProgressMeter
+
 mutable struct Gradient{T}
     L :: T
 end
@@ -134,11 +136,11 @@ function proximal_iter!(A, ∇A, env,
                         compute_fwd!::Function,
                         compute_err!::Function,
                         compute_grad!::Function,
-                        method, n::Int;
+                        method, n::Integer;
                         prox! = nothing,
                         errors=[],
                         print_errors=false,
-                        progress=nothing,
+                        progress=true,
                         restart=false)
     uf = compute_fwd!(env, A)
     err = compute_err!(env, uf)
@@ -146,6 +148,7 @@ function proximal_iter!(A, ∇A, env,
     if print_errors
         println(err)
     end
+    p = progress ? Progress(n) : nothing
     for k in 1:n
         err_tmp = err
         uf = proximal_step!(A, ∇A, env, uf,
@@ -158,8 +161,8 @@ function proximal_iter!(A, ∇A, env,
         if print_errors
             println(err)
         end
-        if progress != nothing
-            next!(progress)
+        if p != nothing
+            next!(p; showvalues = [(:error, err)])
         end
     end
     errors
