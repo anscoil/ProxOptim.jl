@@ -4,17 +4,17 @@ mutable struct Gradient{T}
     L :: T
 end
 
-mutable struct Fista{T <: Real, AType <: AbstractArray{T}}
+mutable struct Fista{T <: Number, AType <: AbstractArray{T}}
     xk :: AType
     xk_tmp :: AType
     tk :: T
     L :: T
-    function Fista(A::AbstractArray{T}, L::Real, tk::Real=1) where {T <: Real}
+    function Fista(A::AbstractArray{T}, L::Real, tk::Real=1) where {T <: Number}
         new{T, typeof(A)}(similar(A), copy(A), T(tk), T(L))
     end
 end
 
-mutable struct MFista{T <: Real, AType <: AbstractArray{T}}
+mutable struct MFista{T <: Number, AType <: AbstractArray{T}}
     zk :: AType
     xk :: AType
     xk_tmp :: AType
@@ -23,7 +23,7 @@ mutable struct MFista{T <: Real, AType <: AbstractArray{T}}
     F :: Function
     F_tmp :: T
     function MFista(A::AbstractArray{T}, L::Real,
-                    F::Function, β::Real=1) where {T <: Real}
+                    F::Function, β::Real=1) where {T <: Number}
         new{T, typeof(A)}(similar(A), similar(A), copy(A),
                           T(β), T(L), F, T(Inf))
     end
@@ -37,7 +37,7 @@ function optim_restart(method)
     nothing
 end
 
-function optim_restart(method::Fista{T,AType}) where {T <: Real,
+function optim_restart(method::Fista{T,AType}) where {T <: Number,
                                                 AType <: AbstractArray{T}}
     method.tk = 1
     nothing
@@ -61,7 +61,7 @@ end
 function gradient_step!(A::AbstractArray{T},
                         ∇A::AbstractArray{T},
                         prox!::Function,
-                        method::Gradient) where {T <: Real}
+                        method::Gradient) where {T <: Number}
     A .-= (1/method.L).*∇A
     prox!(A)
 end
@@ -69,7 +69,7 @@ end
 function gradient_step!(A::AbstractArray{T},
                         ∇A::AbstractArray{T},
                         prox!::Function,
-                        method::Fista{T,AType}) where {T <: Real,
+                        method::Fista{T,AType}) where {T <: Number,
                                                        AType <: AbstractArray{T}}
     method.xk .= A .- (1/method.L).*∇A
     prox!(method.xk)
@@ -83,7 +83,7 @@ end
 function gradient_step!(A::AbstractArray{T},
                         ∇A::AbstractArray{T},
                         prox!::Function,
-                        method::MFista{T,AType}) where {T <: Real,
+                        method::MFista{T,AType}) where {T <: Number,
                                                         AType <: AbstractArray{T}}
     # Different than original Monotone Fista
     method.zk .= A .- (1/method.L).*∇A
@@ -106,7 +106,7 @@ function proximal_step!(A::AbstractArray{T},
                         compute_fwd!::Function,
                         compute_grad!::Function,
                         method,
-                        prox!::Union{Nothing,Function}=nothing) where {T <: Real}
+                        prox!::Union{Nothing,Function}=nothing) where {T <: Number}
     compute_grad!(env, A, ∇A, uf)
     proxop! = if prox! == nothing; identity else prox! end
     gradient_step!(A, ∇A, proxop!, method)
@@ -122,7 +122,7 @@ function proximal_step!(A::NTuple{N,AbstractArray{T}},
                         compute_grad!::Function,
                         method::NTuple{N,M where M},
                         prox!::Union{Nothing,
-                                     NTuple{N,Function}}=nothing) where {N, T <: Real}
+                                     NTuple{N,Function}}=nothing) where {N, T <: Number}
     compute_grad!(env, A, ∇A, uf)
     for i in 1:N
         proxop! = if prox! == nothing; identity else prox![i] end
