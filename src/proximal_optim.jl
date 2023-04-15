@@ -114,15 +114,15 @@ function proximal_step!(A::AbstractArray{T},
     return uf
 end
 
-function proximal_step!(A::NTuple{N,AbstractArray{T}},
-                        ∇A::NTuple{N,Union{Nothing,AbstractArray{T}}},
+function proximal_step!(A::NTuple{N,AbstractArray{<:Number}},
+                        ∇A::NTuple{N,Union{Nothing,AbstractArray{<:Number}}},
                         env,
                         uf,
                         compute_fwd!::Function,
                         compute_grad!::Function,
                         method::NTuple{N,M where M},
                         prox!::Union{Nothing,
-                                     NTuple{N,Function}}=nothing) where {N, T <: Number}
+                                     NTuple{N,Function}}=nothing) where {N}
     compute_grad!(env, A, ∇A, uf)
     for i in 1:N
         proxop! = if prox! == nothing; identity else prox![i] end
